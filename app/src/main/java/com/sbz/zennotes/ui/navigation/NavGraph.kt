@@ -5,7 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.sbz.zennotes.ui.screens.HomeScreen
+import com.sbz.zennotes.ui.screens.AddEdit
+import com.sbz.zennotes.ui.screens.MainScreen
 import com.sbz.zennotes.ui.screens.onboarding.Onboarding
 import com.sbz.zennotes.ui.screens.onboarding.SplashScreen
 
@@ -30,8 +31,12 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             Onboarding(modifier = modifier, navController = navController)
         }
 
-        composable("home") {
-            HomeScreen(modifier = modifier, navController = navController)
+        composable("main_screen") {
+            MainScreen(modifier = modifier, navController = navController)
+        }
+
+        composable("add_edit") {
+            AddEdit(modifier = modifier, navController = navController)
         }
 
     }

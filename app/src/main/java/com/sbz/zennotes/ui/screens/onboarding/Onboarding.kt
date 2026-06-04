@@ -11,11 +11,13 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.sbz.zennotes.R
+import com.sbz.zennotes.data.datastore.DataStoreManager
 import com.sbz.zennotes.data.model.OnboardingPage
 import com.sbz.zennotes.ui.components.CustomText
 import com.sbz.zennotes.ui.components.OnboardingButton
@@ -37,6 +40,12 @@ fun Onboarding(
     modifier: Modifier = Modifier,
     navController: NavController
 ) {
+
+    val context = LocalContext.current
+
+    val dataStore = remember {
+        DataStoreManager(context)
+    }
 
     val pages = listOf(
         OnboardingPage(
@@ -71,8 +80,9 @@ fun Onboarding(
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        lightGreen,
                         Color.White,
+                        Color.White,
+                        lightGreen,
                         Color.White
                     )
                 )
@@ -119,7 +129,10 @@ fun Onboarding(
                     text = "Get Started",
                     showArrow = false,
                     onClick = {
-                        navController.navigate("home")
+                        coroutineScope.launch {
+                            dataStore.setFirstTimeUserCompleted()
+                            navController.navigate("main_screen")
+                        }
                     }
                 )
 
@@ -147,7 +160,10 @@ fun Onboarding(
                     text = "Skip",
                     showArrow = false,
                     onClick = {
-                        navController.navigate("home")
+                        coroutineScope.launch {
+                            dataStore.setFirstTimeUserCompleted()
+                            navController.navigate("main_screen")
+                        }
                     },
                     isOutlined = true
                 )

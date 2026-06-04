@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -19,6 +18,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.sbz.zennotes.R
+import com.sbz.zennotes.data.datastore.DataStoreManager
 import com.sbz.zennotes.ui.components.CustomText
 import com.sbz.zennotes.ui.theme.primaryGreen
 import kotlinx.coroutines.delay
@@ -56,25 +58,51 @@ fun SplashScreen(
         label = "progress"
     )
 
+    val context = LocalContext.current
+    val dataStoreManager = remember {
+        DataStoreManager(context)
+    }
+
+    val isFirstTimeUser by
+    dataStoreManager
+        .isFirstTimeUser
+        .collectAsState(
+            initial = true
+        )
+
     LaunchedEffect(Unit) {
 
         startAnimation = true
 
         delay(2000)
 
-        navController.navigate("onboarding") {
+        if (isFirstTimeUser) {
+            navController.navigate("onboarding") {
 
-            popUpTo("splash") {
-                inclusive = true
+                popUpTo("splash") {
+                    inclusive = true
+                }
+
             }
+        } else {
+            navController.navigate("main_screen") {
 
+                popUpTo("splash") {
+                    inclusive = true
+                }
+
+            }
         }
+
+
+
 
     }
 
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
 
@@ -110,7 +138,6 @@ fun SplashScreen(
             CustomText(
                 text = "ZenNotes",
                 style = MaterialTheme.typography.titleLarge,
-                color = Color.Black,
                 fontWeight = FontWeight.Bold
             )
 
@@ -118,7 +145,6 @@ fun SplashScreen(
                 text = "Capture thoughts in their most\n" +
                         "natural state.",
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Black,
                 textAlign = TextAlign.Center
             )
 
